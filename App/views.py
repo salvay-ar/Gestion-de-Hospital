@@ -1,51 +1,61 @@
-from django.http import HttpResponse
+from django.db import connection
 from django.shortcuts import render, redirect
-from .models import Usuario
 from .decorators import requiere_rol
-from django.shortcuts import render
+
 
 def inicio(request):
     return render(request, "App/inicio.html")
 
+
 def login(request):
+
     mensaje = ""
+
     if request.method == "POST":
+
         email = request.POST.get("email")
         usuario = request.POST.get("usuario")
         contraseña = request.POST.get("contraseña")
 
-        try:
+        with connection.cursor() as cursor:
 
-            user = Usuario.objects.get(
-                email=email,
-                usuario=usuario,
-                contraseña=contraseña
-            )
+            cursor.execute("""
+                SELECT id_usuario, rol
+                FROM usuario
+                WHERE email = %s
+                AND usuario = %s
+                AND contraseña = %s
+            """, [email, usuario, contraseña])
 
-            request.session["usuario"] = user.id_usuario
-            request.session["rol"] = user.rol
+            user = cursor.fetchone()
 
-            if user.rol == "Administrador":
+        if user:
+
+            request.session["usuario"] = user[0]
+            request.session["rol"] = user[1]
+
+            if user[1] == "Administrador":
                 return redirect("admin")
 
-            elif user.rol == "Medico":
+            elif user[1] == "Medico":
                 return redirect("medico")
 
-            elif user.rol == "Secretaria":
+            elif user[1] == "Secretaria":
                 return redirect("secretaria")
 
-        except Usuario.DoesNotExist:
+        else:
+
             mensaje = "Correo, usuario o contraseña incorrectos"
 
     return render(request, "App/login.html", {
         "mensaje": mensaje
     })
-    
-from django.shortcuts import redirect
+
 
 def logout(request):
-    request.session.flush()   # Elimina toda la sesión
+    request.session.flush()
     return redirect("login")
+
 
 @requiere_rol("Administrador")
 def admin(request):
