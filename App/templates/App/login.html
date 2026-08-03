@@ -1,35 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
     <title>Login</title>
+
 </head>
+
 <body>
 
-<h1>Login</h1>
+    <h1>Iniciar Sesión</h1>
 
-<form method="POST">
-    {% csrf_token %}
+    <form method="POST">
 
-    <input
-        type="text"
-        name="usuario"
-        placeholder="Usuario">
+        {% csrf_token %}
 
-    <br><br>
+        <input
+            type="email"
+            name="email"
+            placeholder="Correo electrónico"
+            required
+        >
 
-    <input
-        type="password"
-        name="password"
-        placeholder="Contraseña">
+        <br><br>
 
-    <br><br>
+        <input
+            type="text"
+            name="usuario"
+            placeholder="Usuario"
+            required
+        >
 
-    <button type="submit">
-        Ingresar
-    </button>
+        <br><br>
 
-</form>
+        
+        <input
+            type="password"
+            name="contraseña"
+            placeholder="Contraseña"
+            required
+        >
+
+        <br><br>
+
+        <button type="submit">
+            Ingresar
+        </button>
+
+    </form>
+
+    {% if mensaje %}
+        <p style="color:red;">
+            {{ mensaje }}
+        </p>
+    {% endif %}
 
 </body>
+
 </html>
