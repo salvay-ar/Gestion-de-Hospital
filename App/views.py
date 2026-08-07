@@ -44,7 +44,6 @@ def login(request):
                 return redirect("secretaria")
 
         else:
-
             mensaje = "Correo, usuario o contraseña incorrectos"
 
     return render(request, "App/login.html", {
@@ -61,10 +60,68 @@ def logout(request):
 def admin(request):
     return render(request, "App/admin.html")
 
-
 @requiere_rol("Medico")
 def medico(request):
-    return render(request, "App/medico.html")
+
+    paciente = None
+    historial = []
+    mensaje = ""
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT dni
+            FROM paciente
+            ORDER BY dni
+        """)
+        dnis = cursor.fetchall()
+        
+    if request.method == "POST" and "buscar" in request.POST:
+
+        dni = request.POST.get("dni")
+
+        with connection.cursor() as cursor:
+
+            cursor.execute("""
+                SELECT
+                    id_paciente,
+                    nombre,
+                    apellido,
+                    dni,
+                    grupo_sanguineo,
+                    antecedentes
+                FROM paciente
+                WHERE dni = %s
+            """, [dni])
+
+            paciente = cursor.fetchone()
+
+            if paciente:
+
+                cursor.execute("""
+                    SELECT
+                        d.fecha,
+                        d.diagnostico,
+                        h.observaciones
+                    FROM historial_medico h
+                    INNER JOIN diagnostico d
+                        ON h.id_historial = d.id_historial
+                    WHERE h.id_paciente=%s
+                    ORDER BY d.fecha DESC
+                """, [paciente[0]])
+
+                historial = cursor.fetchall()
+
+            else:
+
+                mensaje = "Paciente no encontrado"
+
+    return render(request, "App/medico.html", {
+        "paciente": paciente,
+        "historial": historial,
+        "mensaje": mensaje,
+        "dnis": dnis
+    })
+    
 
 
 @requiere_rol("Secretaria")

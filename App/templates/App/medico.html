@@ -1,3 +1,171 @@
-<a href="{% url 'logout' %}">
-    <button>Cerrar sesión</button>
-</a>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Panel Médico</title>
+
+</head>
+
+<body>
+
+    <h1>Consulta Médica</h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <input
+        type="text"
+        name="dni"
+        list="lista_dnis"
+        placeholder="Buscar por DNI"
+        required
+        >
+
+        <datalist id="lista_dnis">
+            {% for dni in dnis %}
+                <option value="{{ dni.0 }}">
+            {% endfor %}
+        </datalist>
+
+        <button
+            type="submit"
+            name="buscar">
+            Buscar
+        </button>
+
+    </form>
+
+    {% if mensaje %}
+
+        <p style="color:red;">
+            {{ mensaje }}
+        </p>
+
+    {% endif %}
+
+    {% if paciente %}
+
+        <hr>
+
+        <h2>Datos del Paciente</h2>
+
+        <p><strong>Nombre:</strong> {{ paciente.1 }} {{ paciente.2 }}</p>
+
+        <p><strong>DNI:</strong> {{ paciente.3 }}</p>
+
+        <p><strong>Grupo sanguíneo:</strong> {{ paciente.4 }}</p>
+
+        <p><strong>Antecedentes:</strong> {{ paciente.5 }}</p>
+
+        <hr>
+
+        <h2>Nueva Consulta</h2>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="id_paciente"
+                value="{{ paciente.0 }}"
+            >
+
+            <label>Síntomas</label>
+
+            <br>
+
+            <textarea
+                name="sintomas"
+                rows="4"
+                cols="70"
+            ></textarea>
+
+            <br><br>
+
+            <label>Diagnóstico</label>
+
+            <br>
+
+            <input
+                type="text"
+                name="diagnostico"
+                size="70"
+            >
+
+            <br><br>
+
+            <label>Tratamiento</label>
+
+            <br>
+
+            <textarea
+                name="tratamiento"
+                rows="4"
+                cols="70"
+            ></textarea>
+
+            <br><br>
+
+            <button
+                type="submit"
+                name="guardar">
+
+                Guardar Consulta
+
+            </button>
+
+        </form>
+
+        <hr>
+
+        <h2>Historial Médico</h2>
+
+        <table border="1" cellpadding="8">
+
+            <tr>
+
+                <th>Fecha</th>
+                <th>Diagnóstico</th>
+                <th>Observaciones</th>
+
+            </tr>
+
+            {% if historial %}
+
+                {% for consulta in historial %}
+
+                    <tr>
+
+                        <td>{{ consulta.0 }}</td>
+
+                        <td>{{ consulta.1 }}</td>
+
+                        <td>{{ consulta.2 }}</td>
+
+                    </tr>
+
+                {% endfor %}
+
+            {% else %}
+
+                <tr>
+
+                    <td colspan="3">
+
+                        El paciente no posee historial médico.
+
+                    </td>
+
+                </tr>
+
+            {% endif %}
+
+        </table>
+
+    {% endif %}
+
+</body>
+</html>
