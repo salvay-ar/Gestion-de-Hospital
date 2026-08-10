@@ -1,9 +1,702 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
-    <title>Sistema Hospitalario</title>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hospital Fajuar</title>
+
+    <link rel="stylesheet" href="{% static 'inicio.css' %}">
+
 </head>
+
+
 <body>
-    <h1>Bienvenido</h1>
+
+
+    <!-- =====================================================
+         BARRA DE NAVEGACIÓN
+    ====================================================== -->
+
+    <header class="navbar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                ✚
+            </div>
+
+            <span>
+                Hospital Fajuar
+            </span>
+
+        </div>
+
+
+        <nav>
+
+            <a href="#">
+                Inicio
+            </a>
+
+            <a href="#especialidades">
+                Especialidades
+            </a>
+
+            <a href="#nosotros">
+                Nosotros
+            </a>
+
+            <a href="#contacto">
+                Contacto
+            </a>
+
+            <a href="#" class="btn-login">
+                Iniciar sesión
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+    ====================================================== -->
+
+    <main>
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="hero">
+
+
+            <div class="hero-content">
+
+
+                <span class="badge">
+                    CUIDAMOS TU SALUD
+                </span>
+
+
+                <h1>
+
+                    Tu salud,
+                    <span>nuestra prioridad</span>
+
+                </h1>
+
+
+                <p>
+
+                    En el Hospital Fajuar trabajamos para brindar
+                    atención médica de calidad, con profesionales
+                    capacitados y un equipo comprometido con el bienestar
+                    de nuestros pacientes.
+
+                </p>
+
+
+                <div class="buttons">
+
+                    <a href="#especialidades"
+                       class="btn-primary">
+
+                        Ver especialidades
+
+                    </a>
+
+
+                    <a href="#contacto"
+                       class="btn-secondary">
+
+                        Contactarnos
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =============================================
+                 INFORMACIÓN DEL HOSPITAL
+            ============================================== -->
+
+            <div class="dashboard-card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Hospital Fajuar
+                        </h3>
+
+                        <p>
+                            Atención médica integral
+                        </p>
+
+                    </div>
+
+
+                    <span class="online">
+                        ● Atención activa
+                    </span>
+
+                </div>
+
+
+
+                <div class="statistics">
+
+
+                    <div class="stat">
+
+                        <div class="stat-icon blue">
+                            🏥
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                24 hs
+                            </strong>
+
+                            <span>
+                                Atención
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="stat">
+
+                        <div class="stat-icon green">
+                            🩺
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                +30
+                            </strong>
+
+                            <span>
+                                Profesionales
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="stat">
+
+                        <div class="stat-icon purple">
+                            ❤️
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                +10
+                            </strong>
+
+                            <span>
+                                Especialidades
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="stat">
+
+                        <div class="stat-icon orange">
+                            📅
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Turnos
+                            </strong>
+
+                            <span>
+                                Programados
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             ESPECIALIDADES
+        ================================================== -->
+
+        <section class="services"
+                 id="especialidades">
+
+
+            <div class="section-title">
+
+                <span>
+                    NUESTROS SERVICIOS
+                </span>
+
+
+                <h2>
+                    Especialidades médicas
+                </h2>
+
+
+                <p>
+
+                    Contamos con profesionales especializados
+                    para brindar atención en diferentes áreas
+                    de la salud.
+
+                </p>
+
+            </div>
+
+
+
+            <div class="service-grid">
+
+
+                <!-- Cardiología -->
+
+                <div class="service-card">
+
+                    <div class="service-icon">
+                        ❤️
+                    </div>
+
+                    <h3>
+                        Cardiología
+                    </h3>
+
+                    <p>
+
+                        Atención y seguimiento de enfermedades
+                        cardiovasculares.
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- Clínica médica -->
+
+                <div class="service-card">
+
+                    <div class="service-icon">
+                        🩺
+                    </div>
+
+                    <h3>
+                        Clínica Médica
+                    </h3>
+
+                    <p>
+
+                        Atención integral para la prevención,
+                        diagnóstico y tratamiento.
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- Pediatría -->
+
+                <div class="service-card">
+
+                    <div class="service-icon">
+                        👶
+                    </div>
+
+                    <h3>
+                        Pediatría
+                    </h3>
+
+                    <p>
+
+                        Atención médica especializada para
+                        niños y adolescentes.
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- Traumatología -->
+
+                <div class="service-card">
+
+                    <div class="service-icon">
+                        🦴
+                    </div>
+
+                    <h3>
+                        Traumatología
+                    </h3>
+
+                    <p>
+
+                        Diagnóstico y tratamiento de lesiones
+                        y enfermedades del sistema locomotor.
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             SOBRE EL HOSPITAL
+        ================================================== -->
+
+        <section class="about"
+                 id="nosotros">
+
+
+            <div class="about-content">
+
+
+                <span class="badge">
+                    SOBRE NOSOTROS
+                </span>
+
+
+                <h2>
+
+                    Comprometidos con la salud
+                    de nuestra comunidad
+
+                </h2>
+
+
+                <p>
+
+                    El Hospital Fajuar es una institución
+                    dedicada a brindar atención médica integral
+                    a nuestra comunidad.
+
+                    Nuestro equipo está formado por profesionales
+                    de distintas especialidades que trabajan
+                    diariamente para ofrecer una atención
+                    responsable, humana y de calidad.
+
+                </p>
+
+
+                <ul>
+
+                    <li>
+                        ✓ Profesionales capacitados
+                    </li>
+
+                    <li>
+                        ✓ Atención centrada en el paciente
+                    </li>
+
+                    <li>
+                        ✓ Instalaciones equipadas
+                    </li>
+
+                    <li>
+                        ✓ Atención y seguimiento personalizado
+                    </li>
+
+                </ul>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             INFORMACIÓN PARA PACIENTES
+        ================================================== -->
+
+        <section class="patient-info">
+
+
+            <div class="patient-card">
+
+
+                <div class="patient-icon">
+                    👤
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Información para pacientes
+                    </h2>
+
+
+                    <p>
+
+                        Consultá información sobre turnos,
+                        especialidades, profesionales,
+                        horarios de atención y servicios
+                        disponibles en nuestro hospital.
+
+                    </p>
+
+
+                    <a href="#contacto"
+                       class="btn-primary">
+
+                        Ver información
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             CONTACTO
+        ================================================== -->
+
+        <section class="contact"
+                 id="contacto">
+
+
+            <div class="section-title">
+
+                <span>
+                    CONTACTO
+                </span>
+
+
+                <h2>
+                    Estamos para ayudarte
+                </h2>
+
+
+                <p>
+
+                    Si necesitás información o querés
+                    realizar una consulta, podés
+                    comunicarte con nosotros.
+
+                </p>
+
+            </div>
+
+
+
+            <div class="contact-grid">
+
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+                        📍
+                    </div>
+
+                    <h3>
+                        Dirección
+                    </h3>
+
+                    <p>
+                        Av. Principal 1234
+                    </p>
+
+                </div>
+
+
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+                        📞
+                    </div>
+
+                    <h3>
+                        Teléfono
+                    </h3>
+
+                    <p>
+                        (0351) 456-7890
+                    </p>
+
+                </div>
+
+
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+                        🕐
+                    </div>
+
+                    <h3>
+                        Atención
+                    </h3>
+
+                    <p>
+                        Lunes a viernes
+                        <br>
+                        08:00 - 20:00 hs
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer id="footer">
+
+
+        <div class="footer-content">
+
+
+            <div>
+
+                <h3>
+                    ✚ Hospital Fajuar
+                </h3>
+
+
+                <p>
+
+                    Brindando atención médica de calidad
+                    y comprometidos con la salud de nuestra
+                    comunidad.
+
+                </p>
+
+            </div>
+
+
+
+            <div>
+
+                <h4>
+                    Navegación
+                </h4>
+
+
+                <a href="#">
+                    Inicio
+                </a>
+
+                <a href="#especialidades">
+                    Especialidades
+                </a>
+
+                <a href="#nosotros">
+                    Nosotros
+                </a>
+
+                <a href="#contacto">
+                    Contacto
+                </a>
+
+            </div>
+
+
+
+            <div>
+
+                <h4>
+                    Acceso
+                </h4>
+
+
+                <a href="#">
+                    Iniciar sesión
+                </a>
+
+                <a href="#">
+                    Portal de empleados
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="footer-bottom">
+
+            © 2026 Hospital Fajuar.
+            Todos los derechos reservados.
+
+        </div>
+
+
+    </footer>
+
+
 </body>
+
 </html>
