@@ -1,7 +1,3 @@
-/* =========================================================
-   FAJUAR - SISTEMA HOSPITALARIO
-   ========================================================= */
-
 * {
     margin: 0;
     padding: 0;
@@ -30,11 +26,6 @@ body {
     color: var(--texto);
 }
 
-
-/* =========================================================
-   NAVBAR
-   ========================================================= */
-
 .navbar {
     height: 75px;
 
@@ -51,9 +42,6 @@ body {
     position: relative;
     z-index: 100;
 }
-
-
-/* Logo */
 
 .logo {
     display: flex;
@@ -84,9 +72,6 @@ body {
     font-size: 22px;
 }
 
-
-/* Navegación */
-
 nav {
     display: flex;
     align-items: center;
@@ -109,9 +94,6 @@ nav a:hover {
     color: var(--azul);
 }
 
-
-/* Botón Login */
-
 .btn-login {
     background: var(--azul);
 
@@ -125,11 +107,6 @@ nav a:hover {
 .btn-login:hover {
     background: var(--azul-oscuro);
 }
-
-
-/* =========================================================
-   HERO / BANNER
-   ========================================================= */
 
 .hero {
     min-height: 650px;
@@ -154,9 +131,6 @@ nav a:hover {
     background-repeat: no-repeat;
 }
 
-
-/* Capa oscura sobre la imagen */
-
 .hero-overlay {
     position: absolute;
 
@@ -172,11 +146,6 @@ nav a:hover {
 
     z-index: 1;
 }
-
-
-/* =========================================================
-   PANELES FLOTANTES
-   ========================================================= */
 
 .hero-panel {
     position: relative;
@@ -196,11 +165,6 @@ nav a:hover {
     border-radius: 20px;
 }
 
-
-/* =========================================================
-   PANEL IZQUIERDO
-   ========================================================= */
-
 .hero-main-panel {
     width: 570px;
 
@@ -208,9 +172,6 @@ nav a:hover {
 
     transform: translateY(-8px);
 }
-
-
-/* Badge */
 
 .badge {
     display: inline-block;
@@ -231,9 +192,6 @@ nav a:hover {
     margin-bottom: 20px;
 }
 
-
-/* Título */
-
 .hero-main-panel h1 {
     font-size: 52px;
 
@@ -250,9 +208,6 @@ nav a:hover {
     color: var(--azul);
 }
 
-
-/* Descripción */
-
 .hero-main-panel p {
     color: var(--gris);
 
@@ -264,11 +219,6 @@ nav a:hover {
 
     max-width: 500px;
 }
-
-
-/* =========================================================
-   BOTONES
-   ========================================================= */
 
 .buttons {
     display: flex;
@@ -289,9 +239,6 @@ nav a:hover {
     transition: 0.3s;
 }
 
-
-/* Principal */
-
 .btn-primary {
     background: var(--azul);
 
@@ -307,9 +254,6 @@ nav a:hover {
         0 8px 20px rgba(23, 105, 170, 0.3);
 }
 
-
-/* Secundario */
-
 .btn-secondary {
     background: white;
 
@@ -324,11 +268,6 @@ nav a:hover {
     transform: translateY(-2px);
 }
 
-
-/* =========================================================
-   PANEL DERECHO - HOSPITAL
-   ========================================================= */
-
 .hospital-panel {
     width: 420px;
 
@@ -336,9 +275,6 @@ nav a:hover {
 
     transform: translateY(25px);
 }
-
-
-/* Header */
 
 .card-header {
     display: flex;
@@ -366,9 +302,6 @@ nav a:hover {
     color: var(--gris);
 }
 
-
-/* Estado */
-
 .online {
     color: #16a34a;
 
@@ -378,11 +311,6 @@ nav a:hover {
 
     white-space: nowrap;
 }
-
-
-/* =========================================================
-   ESTADÍSTICAS
-   ========================================================= */
 
 .statistics {
     display: grid;
@@ -417,9 +345,6 @@ nav a:hover {
         0 8px 20px rgba(13, 59, 102, 0.08);
 }
 
-
-/* Iconos */
-
 .stat-icon {
     width: 42px;
     height: 42px;
@@ -452,9 +377,6 @@ nav a:hover {
     background: #ffedd5;
 }
 
-
-/* Números */
-
 .stat strong {
     display: block;
 
@@ -472,11 +394,6 @@ nav a:hover {
 
     margin-top: 2px;
 }
-
-
-/* =========================================================
-   ESPECIALIDADES
-   ========================================================= */
 
 .services {
     padding: 90px 8%;
@@ -516,9 +433,6 @@ nav a:hover {
     line-height: 1.6;
 }
 
-
-/* Grid */
-
 .service-grid {
     display: grid;
 
@@ -526,9 +440,6 @@ nav a:hover {
 
     gap: 22px;
 }
-
-
-/* Cards */
 
 .service-card {
     padding: 30px 22px;
@@ -551,9 +462,6 @@ nav a:hover {
     border-color: #c5dff2;
 }
 
-
-/* Icono */
-
 .service-icon {
     width: 58px;
     height: 58px;
@@ -574,9 +482,6 @@ nav a:hover {
     font-size: 24px;
 }
 
-
-/* Texto */
-
 .service-card h3 {
     font-size: 17px;
 
@@ -590,11 +495,6 @@ nav a:hover {
 
     line-height: 1.6;
 }
-
-
-/* =========================================================
-   SOBRE FAJUAR
-   ========================================================= */
 
 .about {
     padding: 90px 8%;
@@ -630,9 +530,6 @@ nav a:hover {
     margin-bottom: 25px;
 }
 
-
-/* Lista */
-
 .about ul {
     list-style: none;
 
@@ -650,11 +547,6 @@ nav a:hover {
 
     font-weight: 500;
 }
-
-
-/* =========================================================
-   CONTACTO
-   ========================================================= */
 
 .contact {
     padding: 90px 8%;
@@ -725,11 +617,6 @@ nav a:hover {
     line-height: 1.5;
 }
 
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
 footer {
     background: var(--azul-oscuro);
 
@@ -766,9 +653,6 @@ footer {
     font-size: 13px;
 }
 
-
-/* Links */
-
 .footer-content a {
     display: block;
 
@@ -789,9 +673,6 @@ footer {
     color: white;
 }
 
-
-/* Copyright */
-
 .footer-bottom {
     padding-top: 20px;
 
@@ -803,11 +684,6 @@ footer {
 
     font-size: 11px;
 }
-
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
 
 @media (max-width: 1100px) {
 
