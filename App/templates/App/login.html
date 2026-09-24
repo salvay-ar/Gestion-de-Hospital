@@ -1,60 +1,84 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Iniciar Sesión</title>
 
+    <link rel="stylesheet" href="{% static 'login.css' %}">
 </head>
 
 <body>
 
-    <h1>Iniciar Sesión</h1>
+    <main class="login-page">
 
-    <form method="POST">
+        <div class="login-card">
 
-        {% csrf_token %}
+            <div class="login-header">
+                <div class="login-icon">+</div>
 
-        <input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            required
-        >
+                <h1>Iniciar Sesión</h1>
 
-        <br><br>
+                <p>Ingresá a tu cuenta de FAJUAR</p>
+            </div>
 
-        <input
-            type="text"
-            name="usuario"
-            placeholder="Usuario"
-            required
-        >
+            <form method="POST">
 
-        <br><br>
+                {% csrf_token %}
 
-        
-        <input
-            type="password"
-            name="contraseña"
-            placeholder="Contraseña"
-            required
-        >
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
 
-        <br><br>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Ingresá tu correo electrónico"
+                        required
+                    >
+                </div>
 
-        <button type="submit">
-            Ingresar
-        </button>
+                <div class="form-group">
+                    <label for="usuario">Usuario</label>
 
-    </form>
+                    <input
+                        type="text"
+                        id="usuario"
+                        name="usuario"
+                        placeholder="Ingresá tu usuario"
+                        required
+                    >
+                </div>
 
-    {% if mensaje %}
-        <p style="color:red;">
-            {{ mensaje }}
-        </p>
-    {% endif %}
+                <div class="form-group">
+                    <label for="contraseña">Contraseña</label>
+
+                    <input
+                        type="password"
+                        id="contraseña"
+                        name="contraseña"
+                        placeholder="Ingresá tu contraseña"
+                        required
+                    >
+                </div>
+
+                <button type="submit">
+                    Ingresar
+                </button>
+
+            </form>
+
+            {% if mensaje %}
+                <p class="mensaje-error">
+                    {{ mensaje }}
+                </p>
+            {% endif %}
+
+        </div>
+
+    </main>
 
 </body>
 
