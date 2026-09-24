@@ -12,17 +12,12 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-^2r%x7^mczny7$)5vdw!7qz%%k4uf88gbja97@t@+uno)e6wsr'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -68,17 +63,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Proyecto01.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gestionhospital',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'arianasalvay1',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
