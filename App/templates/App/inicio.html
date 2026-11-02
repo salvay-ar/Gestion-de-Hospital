@@ -11,12 +11,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{% static 'inicio.css' %}">
+    <link rel="stylesheet" href="{% static 'inicio.css' %}?v=3">
 </head>
 
 <body>
 
-    <!-- ================= NAVBAR ================= -->
     <header class="navbar">
         <a href="/" class="logo" aria-label="FAJUAR, ir al inicio">
             <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
@@ -26,26 +25,30 @@
             <span>FAJUAR</span>
         </a>
 
-        <nav aria-label="Principal">
+        <a href="#" class="btn btn-primary btn-sm btn-turno-mobile">Sacar turno</a>
+
+        <button class="nav-toggle" type="button" aria-label="Abrir menú"
+                aria-expanded="false" aria-controls="menu-principal">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav id="menu-principal" aria-label="Principal">
             <a href="#especialidades" class="nav-link">Especialidades</a>
             <a href="#nosotros" class="nav-link">Sobre Fajuar</a>
             <a href="#turnos" class="nav-link">Turnos</a>
             <a href="#contacto" class="nav-link">Contacto</a>
 
-            <!-- TODO: cambiar href="#" por la URL de turnos cuando esté lista -->
-            <a href="#" class="btn btn-primary btn-sm">Sacar turno</a>
+            <a href="#" class="btn btn-primary btn-sm btn-turno-desktop">Sacar turno</a>
 
-            <!-- Acceso para empleados -->
             <a href="/login" class="btn btn-ghost btn-sm">Iniciar sesión</a>
         </nav>
     </header>
 
     <main>
 
-        <!-- ================= HERO ================= -->
         <section class="hero">
             <div class="hero-text">
-                <h1>Atención médica cerca tuyo, con turno cuando lo necesitás</h1>
+                <h1>Atencion medica a tu servicio</h1>
 
                 <p>
                     En FAJUAR reunimos profesionales de distintas especialidades
@@ -54,7 +57,7 @@
                 </p>
 
                 <div class="hero-actions">
-                    <!-- TODO: cambiar href="#" por la URL de turnos -->
+
                     <a href="#" class="btn btn-primary btn-lg">Sacar turno</a>
                     <a href="#especialidades" class="btn btn-outline btn-lg">Ver especialidades</a>
                 </div>
@@ -75,14 +78,13 @@
 
                 <div class="info-item">
                     <span class="info-label">Teléfono</span>
-                    <strong>(0351) 456-7890</strong>
-                    <span class="info-sub">Av. Principal 1234</span>
+                    <strong>0810 8800 100</strong>
+                    <span class="info-sub">Av. Marcelo T. de Alvear 132</span>
                 </div>
             </aside>
         </section>
 
 
-        <!-- ================= ESPECIALIDADES ================= -->
         <section class="section" id="especialidades">
             <div class="section-head">
                 <h2>Especialidades médicas</h2>
@@ -106,18 +108,16 @@
                     <h3>Traumatología</h3>
                     <p>Lesiones y enfermedades de huesos, músculos y articulaciones.</p>
                 </li>
-                <!-- Agregá más <li> a medida que sumes especialidades -->
+
             </ul>
         </section>
 
 
-        <!-- ================= SOBRE FAJUAR ================= -->
         <section class="section section-tint" id="nosotros">
             <div class="about">
                 <div class="about-text">
                     <h2>Sobre Fajuar</h2>
 
-                    <!-- EDITAR: reemplazá este texto con la historia real del hospital -->
                     <p>
                         FAJUAR nació con una idea simple: que la atención médica de
                         calidad esté al alcance de nuestra comunidad. Con el tiempo
@@ -134,23 +134,22 @@
 
                 <ul class="values">
                     <li>
-                        <strong>Profesionales capacitados</strong>
-                        <span>Equipos de distintas especialidades, en formación permanente.</span>
+                        <strong>Nuestros profesionales</strong>
+                        <span>Te ofrecemos una amplia gama de profesionales de la salud, incluyendo médicos especialistas, enfermeros, técnicos de laboratorio, radiólogos, anestesistas, fisioterapeutas y personal de administración</span>
                     </li>
                     <li>
                         <strong>Atención centrada en el paciente</strong>
-                        <span>Te escuchamos, te explicamos y te acompañamos.</span>
+                        <span>Nos encargamos que tu experiencia sea personalizada y de primera calidad con nuestra cobertura médica integral e investigacion.</span>
                     </li>
                     <li>
                         <strong>Instalaciones equipadas</strong>
-                        <span>Espacios pensados para tu comodidad y seguridad.</span>
+                        <span>Espacios pensados para tu comodidad y seguridad, ademas contamos con equipamiento médico y tecnológico de vanguardia enfocado en medicina de precisión, diagnóstico avanzado y cirugía de alta complejidad.</span>
                     </li>
                 </ul>
             </div>
         </section>
 
 
-        <!-- ================= TURNOS ================= -->
         <section class="section" id="turnos">
             <div class="turnos">
                 <div class="turnos-text">
@@ -159,7 +158,6 @@
                         Reservá tu consulta en pocos pasos, sin filas ni llamadas.
                     </p>
 
-                    <!-- TODO: cambiar href="#" por la URL de turnos -->
                     <a href="#" class="btn btn-accent btn-lg">Sacar turno</a>
                 </div>
 
@@ -181,7 +179,6 @@
         </section>
 
 
-        <!-- ================= CONTACTO ================= -->
         <section class="section section-tint" id="contacto">
             <div class="section-head">
                 <h2>Contacto</h2>
@@ -191,11 +188,11 @@
             <dl class="contact-list">
                 <div>
                     <dt>Dirección</dt>
-                    <dd>Av. Principal 1234</dd>
+                    <dd>Av. Marcelo T. de Alvear 132</dd>
                 </div>
                 <div>
                     <dt>Teléfono</dt>
-                    <dd>(0351) 456-7890</dd>
+                    <dd>0810 8800 100</dd>
                 </div>
                 <div>
                     <dt>Horario de consultorios</dt>
@@ -211,7 +208,6 @@
     </main>
 
 
-    <!-- ================= FOOTER ================= -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-brand">
@@ -222,7 +218,7 @@
                     </svg>
                     <span>FAJUAR</span>
                 </a>
-                <p>Atención médica de calidad, comprometidos con la salud de nuestra comunidad.</p>
+                <p>Atención médica de primera calidad, comprometidos con la salud de nuestra comunidad.</p>
             </div>
 
             <div>
@@ -244,6 +240,33 @@
             © 2026 FAJUAR. Todos los derechos reservados.
         </div>
     </footer>
+
+    <script>
+        (function () {
+            var toggle = document.querySelector('.nav-toggle');
+            var menu = document.getElementById('menu-principal');
+            if (!toggle || !menu) return;
+
+            function setOpen(open) {
+                menu.classList.toggle('is-open', open);
+                toggle.classList.toggle('is-open', open);
+                toggle.setAttribute('aria-expanded', open);
+                toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+            }
+
+            toggle.addEventListener('click', function () {
+                setOpen(!menu.classList.contains('is-open'));
+            });
+
+            menu.addEventListener('click', function (e) {
+                if (e.target.closest('a')) setOpen(false);
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') setOpen(false);
+            });
+        })();
+    </script>
 
 </body>
 
