@@ -70,8 +70,7 @@ def admin(request):
         if accion == "guardar_usuario":
 
             id_usuario = request.POST.get("id_usuario")
-            nombre = request.POST.get("nombre")
-            apellido = request.POST.get("apellido")
+            nombre = request.POST.get("nombre", "").strip()
             usuario = request.POST.get("usuario", "").strip()
             email = request.POST.get("email", "").strip()
             contraseña = request.POST.get("contraseña", "")
@@ -156,7 +155,6 @@ def admin(request):
                                         cursor.execute("""
                                             UPDATE usuario
                                             SET nombre = %s,
-                                                apellido =%s,
                                                 usuario = %s,
                                                 email = %s,
                                                 contraseña = %s,
@@ -164,7 +162,6 @@ def admin(request):
                                             WHERE id_usuario = %s
                                         """, [
                                             nombre,
-                                            apellido,
                                             usuario,
                                             email,
                                             contraseña,
@@ -175,14 +172,12 @@ def admin(request):
                                         cursor.execute("""
                                             UPDATE usuario
                                             SET nombre = %s,
-                                                apellido = %s,
                                                 usuario = %s,
                                                 email = %s,
                                                 rol = %s
                                             WHERE id_usuario = %s
                                         """, [
                                             nombre,
-                                            apellido,
                                             usuario,
                                             email,
                                             rol,
@@ -245,7 +240,6 @@ def admin(request):
                             cursor.execute("""
                                 INSERT INTO usuario (
                                     nombre,
-                                    apellido,
                                     usuario,
                                     email,
                                     contraseña,
@@ -254,7 +248,6 @@ def admin(request):
                                 VALUES (%s, %s, %s, %s, %s)
                             """, [
                                 nombre,
-                                apellido,
                                 usuario,
                                 email,
                                 contraseña,
@@ -305,7 +298,6 @@ def admin(request):
                     SELECT
                         id_usuario,
                         nombre,
-                        apellido,
                         usuario,
                         email,
                         rol
@@ -414,13 +406,11 @@ def admin(request):
                         SELECT
                             id_usuario,
                             nombre,
-                            apellido,
                             usuario,
                             email,
                             rol
                         FROM usuario
                         WHERE nombre LIKE %s
-                           OR apellido LIKE %s
                            OR usuario LIKE %s
                            OR email LIKE %s
                         ORDER BY nombre
@@ -433,7 +423,7 @@ def admin(request):
                     resultados = cursor.fetchall()
 
             else:
-                mensaje = "Ingresá un nombre, apellido, usuario o email."
+                mensaje = "Ingresá un nombre, usuario o email."
 
 
     with connection.cursor() as cursor:
@@ -441,7 +431,6 @@ def admin(request):
             SELECT
                 id_usuario,
                 nombre,
-                apellido,
                 usuario,
                 email,
                 rol
@@ -457,7 +446,6 @@ def admin(request):
             SELECT
                 u.id_usuario,
                 u.nombre,
-                u.apellido
                 u.usuario,
                 u.email,
                 u.rol,
