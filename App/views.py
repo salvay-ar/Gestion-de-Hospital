@@ -1,7 +1,8 @@
 from django.db import connection
 from django.shortcuts import render, redirect
 from .decorators import requiere_rol
-from datetime import date
+from datetime import date, datetime
+from django.db import transaction
 
 
 def inicio(request):
@@ -289,4 +290,386 @@ def medico(request):
 
 @requiere_rol("Secretaria")
 def secretaria(request):
-    return render(request, "App/secretaria.html")
+    mensaje = ""
+    tipo_mensaje = ""
+    paciente_edicion = None
+    cita_edicion = None
+    resultados_pacientes = []
+    busqueda = ""
+
+    if request.method == "POST":
+        accion = request.POST.get("accion", "")
+
+        # REGISTRAR O MODIFICAR PACIENTE
+        if accion == "guardar_paciente":
+            id_paciente = request.POST.get("id_paciente", "").strip()
+            dni = request.POST.get("dni", "").strip()
+            nombre = request.POST.get("nombre", "").strip()
+            apellido = request.POST.get("apellido", "").strip()
+            fecha_nacimiento = request.POST.get("fecha_nacimiento") or None
+            telefono = request.POST.get("telefono", "").strip() or None
+            direccion = request.POST.get("direccion", "").strip() or None
+            grupo_sanguineo = request.POST.get("grupo_sanguineo", "").strip() or None
+            antecedentes = request.POST.get("antecedentes", "").strip() or None
+
+            if not dni or not nombre or not apellido:
+                mensaje = "DNI, nombre y apellido son obligatorios."
+                tipo_mensaje = "error"
+
+            elif fecha_nacimiento and fecha_nacimiento > date.today().isoformat():
+                mensaje = "La fecha de nacimiento no puede ser futura."
+                tipo_mensaje = "error"
+
+            else:
+                with connection.cursor() as cursor:
+                    cursor.execute("""
+                        SELECT id_paciente
+                        FROM paciente
+                        WHERE dni = %s
+                        AND id_paciente != %s
+                    """, [dni, id_paciente or 0])
+
+                    dni_existente = cursor.fetchone()
+
+                    if dni_existente:
+                        mensaje = "Ya existe un paciente con ese DNI."
+                        tipo_mensaje = "error"
+
+                    else:
+                        if id_paciente:
+                            cursor.execute("""
+                                UPDATE paciente
+                                SET dni = %s,
+                                    nombre = %s,
+                                    apellido = %s,
+                                    fecha_nacimiento = %s,
+                                    telefono = %s,
+                                    direccion = %s,
+                                    grupo_sanguineo = %s,
+                                    antecedentes = %s
+                                WHERE id_paciente = %s
+                            """, [
+                                dni,
+                                nombre,
+                                apellido,
+                                fecha_nacimiento,
+                                telefono,
+                                direccion,
+                                grupo_sanguineo,
+                                antecedentes,
+                                id_paciente
+                            ])
+
+                            mensaje = "Paciente modificado correctamente."
+
+                        else:
+                            cursor.execute("""
+                                INSERT INTO paciente (
+                                    dni,
+                                    nombre,
+                                    apellido,
+                                    fecha_nacimiento,
+                                    telefono,
+                                    direccion,
+                                    grupo_sanguineo,
+                                    antecedentes
+                                )
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                            """, [
+                                dni,
+                                nombre,
+                                apellido,
+                                fecha_nacimiento,
+                                telefono,
+                                direccion,
+                                grupo_sanguineo,
+                                antecedentes
+                            ])
+
+                            mensaje = "Paciente registrado correctamente."
+
+                        tipo_mensaje = "exito"
+
+        # BUSCAR PACIENTES
+        elif accion == "buscar_paciente":
+            busqueda = request.POST.get("busqueda", "").strip()
+
+            if busqueda:
+                with connection.cursor() as cursor:
+                    cursor.execute("""
+                        SELECT
+                            id_paciente,
+                            dni,
+                            nombre,
+                            apellido,
+                            fecha_nacimiento,
+                            telefono,
+                            direccion,
+                            grupo_sanguineo,
+                            antecedentes
+                        FROM paciente
+                        WHERE dni LIKE %s
+                           OR nombre LIKE %s
+                           OR apellido LIKE %s
+                           OR CONCAT(nombre, ' ', apellido) LIKE %s
+                        ORDER BY apellido, nombre
+                    """, [
+                        f"%{busqueda}%",
+                        f"%{busqueda}%",
+                        f"%{busqueda}%",
+                        f"%{busqueda}%"
+                    ])
+
+                    resultados_pacientes = cursor.fetchall()
+
+                if not resultados_pacientes:
+                    mensaje = "No se encontraron pacientes."
+                    tipo_mensaje = "error"
+            else:
+                mensaje = "Ingresá un DNI, nombre o apellido."
+                tipo_mensaje = "error"
+
+        # CARGAR PACIENTE PARA MODIFICAR
+        elif accion == "editar_paciente":
+            id_paciente = request.POST.get("id_paciente")
+
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT
+                        id_paciente,
+                        dni,
+                        nombre,
+                        apellido,
+                        fecha_nacimiento,
+                        telefono,
+                        direccion,
+                        grupo_sanguineo,
+                        antecedentes
+                    FROM paciente
+                    WHERE id_paciente = %s
+                """, [id_paciente])
+
+                paciente_edicion = cursor.fetchone()
+
+            if not paciente_edicion:
+                mensaje = "No se encontró el paciente."
+                tipo_mensaje = "error"
+
+        # AGENDAR O REPROGRAMAR CITA
+        elif accion == "guardar_cita":
+            id_cita = request.POST.get("id_cita", "").strip()
+            id_paciente = request.POST.get("id_paciente", "").strip()
+            id_medico = request.POST.get("id_medico", "").strip()
+            fecha_cita = request.POST.get("fecha", "").strip()
+            hora_cita = request.POST.get("hora", "").strip()
+
+            if not id_paciente or not id_medico or not fecha_cita or not hora_cita:
+                mensaje = "Completá todos los campos de la cita."
+                tipo_mensaje = "error"
+
+            elif fecha_cita < date.today().isoformat():
+                mensaje = "No se pueden agendar citas en fechas pasadas."
+                tipo_mensaje = "error"
+
+            else:
+                try:
+                    # Verificar paciente, médico y disponibilidad.
+                    with transaction.atomic():
+                        with connection.cursor() as cursor:
+                            cursor.execute("""
+                                SELECT id_paciente
+                                FROM paciente
+                                WHERE id_paciente = %s
+                            """, [id_paciente])
+
+                            paciente_existe = cursor.fetchone()
+
+                            cursor.execute("""
+                                SELECT id_medico
+                                FROM medico
+                                WHERE id_medico = %s
+                            """, [id_medico])
+
+                            medico_existe = cursor.fetchone()
+
+                            if not paciente_existe or not medico_existe:
+                                mensaje = "El paciente o el médico seleccionado no existe."
+                                tipo_mensaje = "error"
+
+                            else:
+                                cursor.execute("""
+                                    SELECT id_cita
+                                    FROM cita
+                                    WHERE id_medico = %s
+                                      AND fecha = %s
+                                      AND hora = %s
+                                      AND estado != 'Cancelada'
+                                      AND id_cita != %s
+                                """, [
+                                    id_medico,
+                                    fecha_cita,
+                                    hora_cita,
+                                    id_cita or 0
+                                ])
+
+                                conflicto = cursor.fetchone()
+
+                                if conflicto:
+                                    mensaje = "Ese médico ya tiene una cita en ese horario."
+                                    tipo_mensaje = "error"
+
+                                elif id_cita:
+                                    cursor.execute("""
+                                        UPDATE cita
+                                        SET id_paciente = %s,
+                                            id_medico = %s,
+                                            fecha = %s,
+                                            hora = %s
+                                        WHERE id_cita = %s
+                                          AND estado != 'Cancelada'
+                                    """, [
+                                        id_paciente,
+                                        id_medico,
+                                        fecha_cita,
+                                        hora_cita,
+                                        id_cita
+                                    ])
+
+                                    if cursor.rowcount:
+                                        mensaje = "Cita reprogramada correctamente."
+                                        tipo_mensaje = "exito"
+                                    else:
+                                        mensaje = "No se encontró la cita o ya fue cancelada."
+                                        tipo_mensaje = "error"
+
+                                else:
+                                    cursor.execute("""
+                                        INSERT INTO cita (
+                                            id_paciente,
+                                            id_medico,
+                                            fecha,
+                                            hora,
+                                            estado
+                                        )
+                                        VALUES (%s, %s, %s, %s, %s)
+                                    """, [
+                                        id_paciente,
+                                        id_medico,
+                                        fecha_cita,
+                                        hora_cita,
+                                        "Pendiente"
+                                    ])
+
+                                    mensaje = "Cita agendada correctamente."
+                                    tipo_mensaje = "exito"
+
+                except Exception:
+                    mensaje = "Ocurrió un error al guardar la cita. Revisá los datos."
+                    tipo_mensaje = "error"
+
+        # CARGAR CITA PARA REPROGRAMAR
+        elif accion == "editar_cita":
+            id_cita = request.POST.get("id_cita")
+
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT
+                        id_cita,
+                        id_paciente,
+                        id_medico,
+                        fecha,
+                        hora,
+                        estado
+                    FROM cita
+                    WHERE id_cita = %s
+                      AND estado != 'Cancelada'
+                """, [id_cita])
+
+                cita_edicion = cursor.fetchone()
+
+            if not cita_edicion:
+                mensaje = "No se encontró la cita o ya fue cancelada."
+                tipo_mensaje = "error"
+
+        # CANCELAR CITA
+        elif accion == "cancelar_cita":
+            id_cita = request.POST.get("id_cita")
+
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    UPDATE cita
+                    SET estado = 'Cancelada'
+                    WHERE id_cita = %s
+                      AND estado != 'Cancelada'
+                """, [id_cita])
+
+                if cursor.rowcount:
+                    mensaje = "Cita cancelada correctamente."
+                    tipo_mensaje = "exito"
+                else:
+                    mensaje = "La cita no existe o ya estaba cancelada."
+                    tipo_mensaje = "error"
+
+    # DATOS PARA MOSTRAR EN LA PÁGINA
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT
+                id_paciente,
+                dni,
+                nombre,
+                apellido,
+                fecha_nacimiento,
+                telefono,
+                direccion,
+                grupo_sanguineo,
+                antecedentes
+            FROM paciente
+            ORDER BY apellido, nombre
+        """)
+        pacientes = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT
+                id_medico,
+                nombre,
+                apellido,
+                especialidad
+            FROM medico
+            ORDER BY apellido, nombre
+        """)
+        medicos = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT
+                c.id_cita,
+                c.id_paciente,
+                c.id_medico,
+                p.nombre,
+                p.apellido,
+                p.dni,
+                m.nombre,
+                m.apellido,
+                c.fecha,
+                c.hora,
+                c.estado
+            FROM cita c
+            INNER JOIN paciente p
+                ON c.id_paciente = p.id_paciente
+            INNER JOIN medico m
+                ON c.id_medico = m.id_medico
+            ORDER BY c.fecha, c.hora
+        """)
+        citas = cursor.fetchall()
+
+    return render(request, "App/secretaria.html", {
+        "mensaje": mensaje,
+        "tipo_mensaje": tipo_mensaje,
+        "pacientes": pacientes,
+        "medicos": medicos,
+        "citas": citas,
+        "paciente_edicion": paciente_edicion,
+        "cita_edicion": cita_edicion,
+        "resultados_pacientes": resultados_pacientes,
+        "busqueda": busqueda,
+        "hoy": date.today().isoformat()
+    })
