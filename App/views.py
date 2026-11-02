@@ -1,4 +1,4 @@
-from django.db import connection
+from django.db import connection, IntegrityError
 from django.shortcuts import render, redirect
 from .decorators import requiere_rol
 from datetime import date, datetime
@@ -51,7 +51,493 @@ def logout(request):
 
 @requiere_rol("Administrador")
 def admin(request):
-    return render(request, "App/admin.html")
+    mensaje = ""
+    tipo_mensaje = "error"
+
+    usuario_actual = request.session.get("usuario")
+
+    usuario_edicion = None
+    medico_edicion = None
+
+    busqueda = ""
+    resultados = []
+
+    if request.method == "POST":
+
+        accion = request.POST.get("accion")
+
+
+        if accion == "guardar_usuario":
+
+            id_usuario = request.POST.get("id_usuario")
+            nombre = request.POST.get("nombre")
+            apellido = request.POST.get("apellido")
+            usuario = request.POST.get("usuario", "").strip()
+            email = request.POST.get("email", "").strip()
+            contraseña = request.POST.get("contraseña", "")
+            rol = request.POST.get("rol")
+
+            nombre_medico = request.POST.get("nombre_medico", "").strip()
+            apellido_medico = request.POST.get("apellido_medico", "").strip()
+            matricula = request.POST.get("matricula", "").strip()
+            especialidad = request.POST.get("especialidad", "").strip()
+            telefono = request.POST.get("telefono", "").strip()
+            email_medico = request.POST.get("email_medico", "").strip()
+
+            if not nombre or not usuario or not email or not rol:
+                mensaje = "Complete todos los campos obligatorios."
+
+            elif rol not in ["Administrador", "Medico", "Secretaria"]:
+                mensaje = "El rol seleccionado no es válido."
+
+            elif not id_usuario and not contraseña:
+                mensaje = "La contraseña es obligatoria para crear un usuario."
+
+            elif rol == "Medico" and (
+                not nombre_medico or
+                not apellido_medico or
+                not matricula
+            ):
+                mensaje = "Complete los datos profesionales obligatorios del médico."
+
+            else:
+                try:
+                    with connection.cursor() as cursor:
+
+                        if id_usuario:
+                            cursor.execute("""
+                                SELECT rol
+                                FROM usuario
+                                WHERE id_usuario = %s
+                            """, [id_usuario])
+
+                            usuario_anterior = cursor.fetchone()
+
+                            if not usuario_anterior:
+                                mensaje = "El usuario no existe."
+
+                            else:
+                                cursor.execute("""
+                                    SELECT id_medico
+                                    FROM medico
+                                    WHERE id_usuario = %s
+                                """, [id_usuario])
+
+                                medico_existente = cursor.fetchone()
+
+                                if medico_existente and rol != "Medico":
+
+                                    id_medico = medico_existente[0]
+
+                                    cursor.execute("""
+                                        SELECT COUNT(*)
+                                        FROM cita
+                                        WHERE id_medico = %s
+                                    """, [id_medico])
+
+                                    tiene_citas = cursor.fetchone()[0]
+
+                                    cursor.execute("""
+                                        SELECT COUNT(*)
+                                        FROM diagnostico
+                                        WHERE id_medico = %s
+                                    """, [id_medico])
+
+                                    tiene_diagnosticos = cursor.fetchone()[0]
+
+                                    if tiene_citas or tiene_diagnosticos:
+                                        mensaje = (
+                                            "No se puede quitar el rol Médico "
+                                            "porque tiene citas o diagnósticos asociados."
+                                        )
+
+                                if not mensaje:
+                                    if contraseña:
+                                        cursor.execute("""
+                                            UPDATE usuario
+                                            SET nombre = %s,
+                                                apellido =%s,
+                                                usuario = %s,
+                                                email = %s,
+                                                contraseña = %s,
+                                                rol = %s
+                                            WHERE id_usuario = %s
+                                        """, [
+                                            nombre,
+                                            apellido,
+                                            usuario,
+                                            email,
+                                            contraseña,
+                                            rol,
+                                            id_usuario
+                                        ])
+                                    else:
+                                        cursor.execute("""
+                                            UPDATE usuario
+                                            SET nombre = %s,
+                                                apellido = %s,
+                                                usuario = %s,
+                                                email = %s,
+                                                rol = %s
+                                            WHERE id_usuario = %s
+                                        """, [
+                                            nombre,
+                                            apellido,
+                                            usuario,
+                                            email,
+                                            rol,
+                                            id_usuario
+                                        ])
+
+                                    if medico_existente and rol == "Medico":
+                                        cursor.execute("""
+                                            UPDATE medico
+                                            SET nombre = %s,
+                                                apellido = %s,
+                                                matricula = %s,
+                                                especialidad = %s,
+                                                telefono = %s,
+                                                email = %s
+                                            WHERE id_usuario = %s
+                                        """, [
+                                            nombre_medico,
+                                            apellido_medico,
+                                            matricula,
+                                            especialidad or None,
+                                            telefono or None,
+                                            email_medico or None,
+                                            id_usuario
+                                        ])
+
+                                    elif not medico_existente and rol == "Medico":
+                                        cursor.execute("""
+                                            INSERT INTO medico (
+                                                id_usuario,
+                                                nombre,
+                                                apellido,
+                                                matricula,
+                                                especialidad,
+                                                telefono,
+                                                email
+                                            )
+                                            VALUES (%s, %s, %s, %s, %s, %s, %s)
+                                        """, [
+                                            id_usuario,
+                                            nombre_medico,
+                                            apellido_medico,
+                                            matricula,
+                                            especialidad or None,
+                                            telefono or None,
+                                            email_medico or None
+                                        ])
+
+                                    elif medico_existente and rol != "Medico":
+                                        cursor.execute("""
+                                            DELETE FROM medico
+                                            WHERE id_usuario = %s
+                                        """, [id_usuario])
+
+                                    if not mensaje:
+                                        mensaje = "Usuario modificado correctamente."
+                                        tipo_mensaje = "exito"
+
+                        else:
+                            cursor.execute("""
+                                INSERT INTO usuario (
+                                    nombre,
+                                    apellido,
+                                    usuario,
+                                    email,
+                                    contraseña,
+                                    rol
+                                )
+                                VALUES (%s, %s, %s, %s, %s)
+                            """, [
+                                nombre,
+                                apellido,
+                                usuario,
+                                email,
+                                contraseña,
+                                rol
+                            ])
+
+                            nuevo_id = cursor.lastrowid
+
+                            if rol == "Medico":
+                                cursor.execute("""
+                                    INSERT INTO medico (
+                                        id_usuario,
+                                        nombre,
+                                        apellido,
+                                        matricula,
+                                        especialidad,
+                                        telefono,
+                                        email
+                                    )
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                                """, [
+                                    nuevo_id,
+                                    nombre_medico,
+                                    apellido_medico,
+                                    matricula,
+                                    especialidad or None,
+                                    telefono or None,
+                                    email_medico or None
+                                ])
+
+                            mensaje = "Usuario creado correctamente."
+                            tipo_mensaje = "exito"
+
+                except IntegrityError:
+                    mensaje = (
+                        "No se pudo guardar el usuario. "
+                        "El nombre de usuario, email o matrícula "
+                        "pueden estar registrados."
+                    )
+
+
+        elif accion == "editar_usuario":
+
+            id_usuario = request.POST.get("id_usuario")
+
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT
+                        id_usuario,
+                        nombre,
+                        apellido,
+                        usuario,
+                        email,
+                        rol
+                    FROM usuario
+                    WHERE id_usuario = %s
+                """, [id_usuario])
+
+                usuario_edicion = cursor.fetchone()
+
+                cursor.execute("""
+                    SELECT
+                        nombre,
+                        apellido,
+                        matricula,
+                        especialidad,
+                        telefono,
+                        email
+                    FROM medico
+                    WHERE id_usuario = %s
+                """, [id_usuario])
+
+                medico_edicion = cursor.fetchone()
+
+                if not usuario_edicion:
+                    mensaje = "No se encontró el usuario."
+
+
+        elif accion == "eliminar_usuario":
+
+            id_usuario = request.POST.get("id_usuario")
+
+            if str(id_usuario) == str(usuario_actual):
+                mensaje = "No podés eliminar tu propia cuenta."
+
+            else:
+                with connection.cursor() as cursor:
+
+                    cursor.execute("""
+                        SELECT rol
+                        FROM usuario
+                        WHERE id_usuario = %s
+                    """, [id_usuario])
+
+                    usuario_eliminar = cursor.fetchone()
+
+                    if not usuario_eliminar:
+                        mensaje = "El usuario no existe."
+
+                    else:
+                        cursor.execute("""
+                            SELECT id_medico
+                            FROM medico
+                            WHERE id_usuario = %s
+                        """, [id_usuario])
+
+                        medico = cursor.fetchone()
+
+                        if medico:
+                            id_medico = medico[0]
+
+                            cursor.execute("""
+                                SELECT COUNT(*)
+                                FROM cita
+                                WHERE id_medico = %s
+                            """, [id_medico])
+
+                            citas = cursor.fetchone()[0]
+
+                            cursor.execute("""
+                                SELECT COUNT(*)
+                                FROM diagnostico
+                                WHERE id_medico = %s
+                            """, [id_medico])
+
+                            diagnosticos = cursor.fetchone()[0]
+
+                            if citas or diagnosticos:
+                                mensaje = (
+                                    "No se puede eliminar este médico porque "
+                                    "tiene citas o diagnósticos asociados."
+                                )
+
+                            else:
+                                cursor.execute("""
+                                    DELETE FROM medico
+                                    WHERE id_usuario = %s
+                                """, [id_usuario])
+
+                        if not mensaje:
+                            cursor.execute("""
+                                DELETE FROM usuario
+                                WHERE id_usuario = %s
+                            """, [id_usuario])
+
+                            mensaje = "Usuario eliminado correctamente."
+                            tipo_mensaje = "exito"
+
+
+        elif accion == "buscar_usuario":
+
+            busqueda = request.POST.get("busqueda", "").strip()
+
+            if busqueda:
+                with connection.cursor() as cursor:
+                    cursor.execute("""
+                        SELECT
+                            id_usuario,
+                            nombre,
+                            apellido,
+                            usuario,
+                            email,
+                            rol
+                        FROM usuario
+                        WHERE nombre LIKE %s
+                           OR apellido LIKE %s
+                           OR usuario LIKE %s
+                           OR email LIKE %s
+                        ORDER BY nombre
+                    """, [
+                        f"%{busqueda}%",
+                        f"%{busqueda}%",
+                        f"%{busqueda}%"
+                    ])
+
+                    resultados = cursor.fetchall()
+
+            else:
+                mensaje = "Ingresá un nombre, apellido, usuario o email."
+
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT
+                id_usuario,
+                nombre,
+                apellido,
+                usuario,
+                email,
+                rol
+            FROM usuario
+            ORDER BY nombre
+        """)
+
+        usuarios = cursor.fetchall()
+
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT
+                u.id_usuario,
+                u.nombre,
+                u.apellido
+                u.usuario,
+                u.email,
+                u.rol,
+                m.apellido,
+                m.matricula,
+                m.especialidad,
+                m.telefono
+            FROM usuario u
+            LEFT JOIN medico m
+                ON u.id_usuario = m.id_usuario
+            WHERE u.rol IN ('Administrador', 'Medico', 'Secretaria')
+            ORDER BY u.rol, u.nombre
+        """)
+
+        empleados = cursor.fetchall()
+
+
+    with connection.cursor() as cursor:
+
+        cursor.execute("""
+            SELECT rol, COUNT(*)
+            FROM usuario
+            GROUP BY rol
+        """)
+
+        usuarios_por_rol = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM paciente
+        """)
+
+        total_pacientes = cursor.fetchone()[0]
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM medico
+        """)
+
+        total_medicos = cursor.fetchone()[0]
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM cita
+        """)
+
+        total_citas = cursor.fetchone()[0]
+
+        cursor.execute("""
+            SELECT estado, COUNT(*)
+            FROM cita
+            GROUP BY estado
+        """)
+
+        citas_por_estado = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM diagnostico
+        """)
+
+        total_diagnosticos = cursor.fetchone()[0]
+
+
+    return render(request, "App/admin.html", {
+        "usuarios": usuarios,
+        "empleados": empleados,
+        "usuario_edicion": usuario_edicion,
+        "medico_edicion": medico_edicion,
+        "busqueda": busqueda,
+        "resultados": resultados,
+        "mensaje": mensaje,
+        "tipo_mensaje": tipo_mensaje,
+        "usuarios_por_rol": usuarios_por_rol,
+        "total_pacientes": total_pacientes,
+        "total_medicos": total_medicos,
+        "total_citas": total_citas,
+        "citas_por_estado": citas_por_estado,
+        "total_diagnosticos": total_diagnosticos
+    })
 
 
 @requiere_rol("Medico")
@@ -300,7 +786,6 @@ def secretaria(request):
     if request.method == "POST":
         accion = request.POST.get("accion", "")
 
-        # REGISTRAR O MODIFICAR PACIENTE
         if accion == "guardar_paciente":
             id_paciente = request.POST.get("id_paciente", "").strip()
             dni = request.POST.get("dni", "").strip()
@@ -390,7 +875,6 @@ def secretaria(request):
 
                         tipo_mensaje = "exito"
 
-        # BUSCAR PACIENTES
         elif accion == "buscar_paciente":
             busqueda = request.POST.get("busqueda", "").strip()
 
@@ -429,7 +913,6 @@ def secretaria(request):
                 mensaje = "Ingresá un DNI, nombre o apellido."
                 tipo_mensaje = "error"
 
-        # CARGAR PACIENTE PARA MODIFICAR
         elif accion == "editar_paciente":
             id_paciente = request.POST.get("id_paciente")
 
@@ -455,7 +938,6 @@ def secretaria(request):
                 mensaje = "No se encontró el paciente."
                 tipo_mensaje = "error"
 
-        # AGENDAR O REPROGRAMAR CITA
         elif accion == "guardar_cita":
             id_cita = request.POST.get("id_cita", "").strip()
             id_paciente = request.POST.get("id_paciente", "").strip()
@@ -473,7 +955,7 @@ def secretaria(request):
 
             else:
                 try:
-                    # Verificar paciente, médico y disponibilidad.
+                    
                     with transaction.atomic():
                         with connection.cursor() as cursor:
                             cursor.execute("""
@@ -567,7 +1049,6 @@ def secretaria(request):
                     mensaje = "Ocurrió un error al guardar la cita. Revisá los datos."
                     tipo_mensaje = "error"
 
-        # CARGAR CITA PARA REPROGRAMAR
         elif accion == "editar_cita":
             id_cita = request.POST.get("id_cita")
 
@@ -591,7 +1072,6 @@ def secretaria(request):
                 mensaje = "No se encontró la cita o ya fue cancelada."
                 tipo_mensaje = "error"
 
-        # CANCELAR CITA
         elif accion == "cancelar_cita":
             id_cita = request.POST.get("id_cita")
 
@@ -610,7 +1090,6 @@ def secretaria(request):
                     mensaje = "La cita no existe o ya estaba cancelada."
                     tipo_mensaje = "error"
 
-    # DATOS PARA MOSTRAR EN LA PÁGINA
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT

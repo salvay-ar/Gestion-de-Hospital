@@ -1,3 +1,511 @@
-<a href="{% url 'logout' %}">
-    <button>Cerrar sesión</button>
-</a>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+</head>
+
+<body>
+
+    <header>
+        <h1>Panel de Administración</h1>
+        <a href="{% url 'logout' %}">Cerrar sesión</a>
+    </header>
+
+    <main>
+
+        <h2>Administración del Hospital</h2>
+
+        {% if mensaje %}
+            <p>{{ mensaje }}</p>
+        {% endif %}
+
+        <nav>
+            <button type="button" onclick="mostrarSolapa('usuarios')">
+                Usuarios
+            </button>
+
+            <button type="button" onclick="mostrarSolapa('empleados')">
+                Empleados
+            </button>
+
+            <button type="button" onclick="mostrarSolapa('reportes')">
+                Reportes
+            </button>
+        </nav>
+
+
+        <section id="usuarios">
+
+            <h3>
+                {% if usuario_edicion %}
+                    Modificar usuario
+                {% else %}
+                    Crear nuevo usuario
+                {% endif %}
+            </h3>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <input type="hidden" name="accion" value="guardar_usuario">
+
+                <input type="hidden"
+                       name="id_usuario"
+                       value="{% if usuario_edicion %}{{ usuario_edicion.0 }}{% endif %}">
+
+                <p>
+                    <label for="nombre">Nombre completo:</label>
+                    <input type="text"
+                           id="nombre"
+                           name="nombre"
+                           required
+                           value="{% if usuario_edicion %}{{ usuario_edicion.1 }}{% endif %}">
+                </p>
+
+                <p>
+                    <label for="usuario">Usuario:</label>
+                    <input type="text"
+                           id="usuario"
+                           name="usuario"
+                           required
+                           value="{% if usuario_edicion %}{{ usuario_edicion.2 }}{% endif %}">
+                </p>
+
+                <p>
+                    <label for="email">Email:</label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           required
+                           value="{% if usuario_edicion %}{{ usuario_edicion.3 }}{% endif %}">
+                </p>
+
+                <p>
+                    <label for="contraseña">Contraseña:</label>
+                    <input type="password"
+                           id="contraseña"
+                           name="contraseña"
+                           {% if not usuario_edicion %}required{% endif %}>
+                    {% if usuario_edicion %}
+                        <small>Dejá este campo vacío para conservar la contraseña actual.</small>
+                    {% endif %}
+                </p>
+
+                <p>
+                    <label for="rol">Rol:</label>
+
+                    <select id="rol"
+                            name="rol"
+                            required
+                            onchange="mostrarDatosMedico()">
+
+                        <option value="">Seleccionar rol</option>
+
+                        <option value="Administrador"
+                            {% if usuario_edicion and usuario_edicion.4 == "Administrador" %}selected{% endif %}>
+                            Administrador
+                        </option>
+
+                        <option value="Medico"
+                            {% if usuario_edicion and usuario_edicion.4 == "Medico" %}selected{% endif %}>
+                            Médico
+                        </option>
+
+                        <option value="Secretaria"
+                            {% if usuario_edicion and usuario_edicion.4 == "Secretaria" %}selected{% endif %}>
+                            Secretaría
+                        </option>
+
+                    </select>
+                </p>
+
+
+                <!-- DATOS PROFESIONALES DEL MEDICO -->
+
+                <div id="datos-medico" hidden>
+
+                    <h3>Datos profesionales del médico</h3>
+
+                    <p>
+                        <label for="nombre_medico">Nombre:</label>
+                        <input type="text"
+                               id="nombre_medico"
+                               name="nombre_medico"
+                               value="{% if medico_edicion %}{{ medico_edicion.0 }}{% endif %}">
+                    </p>
+
+                    <p>
+                        <label for="apellido_medico">Apellido:</label>
+                        <input type="text"
+                               id="apellido_medico"
+                               name="apellido_medico"
+                               value="{% if medico_edicion %}{{ medico_edicion.1 }}{% endif %}">
+                    </p>
+
+                    <p>
+                        <label for="matricula">Matrícula:</label>
+                        <input type="text"
+                               id="matricula"
+                               name="matricula"
+                               value="{% if medico_edicion %}{{ medico_edicion.2 }}{% endif %}">
+                    </p>
+
+                    <p>
+                        <label for="especialidad">Especialidad:</label>
+                        <input type="text"
+                               id="especialidad"
+                               name="especialidad"
+                               value="{% if medico_edicion %}{{ medico_edicion.3|default_if_none:'' }}{% endif %}">
+                    </p>
+
+                    <p>
+                        <label for="telefono">Teléfono:</label>
+                        <input type="text"
+                               id="telefono"
+                               name="telefono"
+                               value="{% if medico_edicion %}{{ medico_edicion.4|default_if_none:'' }}{% endif %}">
+                    </p>
+
+                    <p>
+                        <label for="email_medico">Email profesional:</label>
+                        <input type="email"
+                               id="email_medico"
+                               name="email_medico"
+                               value="{% if medico_edicion %}{{ medico_edicion.5|default_if_none:'' }}{% endif %}">
+                    </p>
+
+                </div>
+
+                <button type="submit">
+                    {% if usuario_edicion %}
+                        Guardar modificaciones
+                    {% else %}
+                        Crear usuario
+                    {% endif %}
+                </button>
+
+                {% if usuario_edicion %}
+                    <a href="{% url 'admin' %}">Cancelar edición</a>
+                {% endif %}
+
+            </form>
+
+
+            <hr>
+
+            <h3>Buscar usuarios</h3>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <input type="hidden" name="accion" value="buscar_usuario">
+
+                <label for="busqueda">Nombre, usuario o email:</label>
+
+                <input type="text"
+                       id="busqueda"
+                       name="busqueda"
+                       value="{{ busqueda }}">
+
+                <button type="submit">Buscar</button>
+            </form>
+
+
+            {% if resultados %}
+
+                <h3>Resultados de búsqueda</h3>
+
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for u in resultados %}
+                            <tr>
+                                <td>{{ u.1 }}</td>
+                                <td>{{ u.2 }}</td>
+                                <td>{{ u.3 }}</td>
+                                <td>{{ u.4 }}</td>
+
+                                <td>
+                                    <form method="POST">
+                                        {% csrf_token %}
+
+                                        <input type="hidden"
+                                               name="accion"
+                                               value="editar_usuario">
+
+                                        <input type="hidden"
+                                               name="id_usuario"
+                                               value="{{ u.0 }}">
+
+                                        <button type="submit">Editar</button>
+                                    </form>
+
+                                    {% if u.0 != request.session.usuario %}
+                                        <form method="POST"
+                                              onsubmit="return confirm('¿Seguro que querés eliminar este usuario?');">
+
+                                            {% csrf_token %}
+
+                                            <input type="hidden"
+                                                   name="accion"
+                                                   value="eliminar_usuario">
+
+                                            <input type="hidden"
+                                                   name="id_usuario"
+                                                   value="{{ u.0 }}">
+
+                                            <button type="submit">Eliminar</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% endif %}
+
+
+            <hr>
+
+            <h3>Usuarios registrados</h3>
+
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for u in usuarios %}
+                        <tr>
+                            <td>{{ u.1 }}</td>
+                            <td>{{ u.2 }}</td>
+                            <td>{{ u.3 }}</td>
+                            <td>{{ u.4 }}</td>
+
+                            <td>
+                                <form method="POST">
+                                    {% csrf_token %}
+
+                                    <input type="hidden"
+                                           name="accion"
+                                           value="editar_usuario">
+
+                                    <input type="hidden"
+                                           name="id_usuario"
+                                           value="{{ u.0 }}">
+
+                                    <button type="submit">Editar</button>
+                                </form>
+
+                                {% if u.0 != request.session.usuario %}
+                                    <form method="POST"
+                                          onsubmit="return confirm('¿Seguro que querés eliminar este usuario?');">
+
+                                        {% csrf_token %}
+
+                                        <input type="hidden"
+                                               name="accion"
+                                               value="eliminar_usuario">
+
+                                        <input type="hidden"
+                                               name="id_usuario"
+                                               value="{{ u.0 }}">
+
+                                        <button type="submit">Eliminar</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">No hay usuarios registrados.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </section>
+
+
+        <!-- EMPLEADOS -->
+
+        <section id="empleados" hidden>
+
+            <h3>Empleados registrados</h3>
+
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Apellido</th>
+                        <th>Matrícula</th>
+                        <th>Especialidad</th>
+                        <th>Teléfono</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for e in empleados %}
+                        <tr>
+                            <td>{{ e.1 }}</td>
+                            <td>{{ e.2 }}</td>
+                            <td>{{ e.3 }}</td>
+                            <td>{{ e.4 }}</td>
+                            <td>{{ e.5|default_if_none:"-" }}</td>
+                            <td>{{ e.6|default_if_none:"-" }}</td>
+                            <td>{{ e.7|default_if_none:"-" }}</td>
+                            <td>{{ e.8|default_if_none:"-" }}</td>
+                        </tr>
+
+                    {% empty %}
+                        <tr>
+                            <td colspan="8">No hay empleados registrados.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </section>
+
+
+        <!-- REPORTES -->
+
+        <section id="reportes" hidden>
+
+            <h3>Reportes generales</h3>
+
+            <h4>Usuarios por rol</h4>
+
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Rol</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for r in usuarios_por_rol %}
+                        <tr>
+                            <td>{{ r.0 }}</td>
+                            <td>{{ r.1 }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">No hay usuarios registrados.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+            <h4>Estadísticas generales</h4>
+
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Indicador</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Pacientes registrados</td>
+                        <td>{{ total_pacientes }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Médicos registrados</td>
+                        <td>{{ total_medicos }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Citas registradas</td>
+                        <td>{{ total_citas }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Diagnósticos registrados</td>
+                        <td>{{ total_diagnosticos }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <h4>Citas por estado</h4>
+
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Estado</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for c in citas_por_estado %}
+                        <tr>
+                            <td>{{ c.0|default_if_none:"Sin estado" }}</td>
+                            <td>{{ c.1 }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">No hay citas registradas.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </section>
+
+    </main>
+
+
+    <script>
+        function mostrarSolapa(nombre) {
+            document.getElementById("usuarios").hidden = true;
+            document.getElementById("empleados").hidden = true;
+            document.getElementById("reportes").hidden = true;
+
+            document.getElementById(nombre).hidden = false;
+        }
+
+        function mostrarDatosMedico() {
+            const rol = document.getElementById("rol").value;
+            const datos = document.getElementById("datos-medico");
+
+            datos.hidden = rol !== "Medico";
+        }
+
+        mostrarDatosMedico();
+
+        {% if usuario_edicion or resultados %}
+            mostrarSolapa("usuarios");
+        {% endif %}
+    </script>
+
+</body>
+</html>
