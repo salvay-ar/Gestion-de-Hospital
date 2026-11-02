@@ -1,512 +1,250 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>FAJUAR | Hospital</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'inicio.css' %}">
-
 </head>
-
 
 <body>
 
+    <!-- ================= NAVBAR ================= -->
     <header class="navbar">
+        <a href="/" class="logo" aria-label="FAJUAR, ir al inicio">
+            <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+                <rect width="32" height="32" rx="8"/>
+                <path d="M13 7h6v6h6v6h-6v6h-6v-6H7v-6h6z"/>
+            </svg>
+            <span>FAJUAR</span>
+        </a>
 
-        <div class="logo">
+        <nav aria-label="Principal">
+            <a href="#especialidades" class="nav-link">Especialidades</a>
+            <a href="#nosotros" class="nav-link">Sobre Fajuar</a>
+            <a href="#turnos" class="nav-link">Turnos</a>
+            <a href="#contacto" class="nav-link">Contacto</a>
 
-            <div class="logo-icon">
-                ✚
-            </div>
+            <!-- TODO: cambiar href="#" por la URL de turnos cuando esté lista -->
+            <a href="#" class="btn btn-primary btn-sm">Sacar turno</a>
 
-            <span>
-                FAJUAR
-            </span>
-
-        </div>
-
-
-        <nav>
-
-        <a href="#especialidades">
-                Especialidades
-            </a>
-
-            <a href="#nosotros">
-                Nosotros
-            </a>
-
-            <a href="#contacto">
-                Contacto
-            </a>
-
-            <a href="/login" class="btn-login">
-                Iniciar sesión
-            </a>
-
+            <!-- Acceso para empleados -->
+            <a href="/login" class="btn btn-ghost btn-sm">Iniciar sesión</a>
         </nav>
-
     </header>
-
 
     <main>
 
+        <!-- ================= HERO ================= -->
         <section class="hero">
-            <div class="hero-overlay"></div>
-            <div class="hero-panel hero-main-panel">
-
-                <span class="badge">
-                    CUIDAMOS TU SALUD
-                </span>
-
-                <h1>
-                    Tu salud,
-                    <span>nuestra prioridad</span>
-                </h1>
-
+            <div class="hero-text">
+                <h1>Atención médica cerca tuyo, con turno cuando lo necesitás</h1>
 
                 <p>
-                    En FAJUAR trabajamos para brindar atención
-                    médica de calidad, con profesionales capacitados
-                    y un equipo comprometido con el bienestar
-                    de nuestros pacientes.
+                    En FAJUAR reunimos profesionales de distintas especialidades
+                    para acompañarte en cada etapa de tu salud, con un trato
+                    humano y seguimiento personalizado.
                 </p>
 
-
-                <div class="buttons">
-                    <a href="#especialidades"
-                       class="btn-primary">
-
-                        Ver especialidades
-
-                    </a>
-
-
-                    <a href="#contacto"
-                       class="btn-secondary">
-                        Contactarnos
-                    </a>
+                <div class="hero-actions">
+                    <!-- TODO: cambiar href="#" por la URL de turnos -->
+                    <a href="#" class="btn btn-primary btn-lg">Sacar turno</a>
+                    <a href="#especialidades" class="btn btn-outline btn-lg">Ver especialidades</a>
                 </div>
             </div>
 
-            <div class="dashboard-card">
-
-
-                <div class="card-header">
-                    <div>
-                        <h3>
-                            Hospital FAJUAR
-                        </h3>
-                        <p>
-                            Atención médica integral
-                        </p>
-                    </div>
-
-
-                    <span class="online">
-                        ● Atención activa
-                    </span>
+            <aside class="hero-info" aria-label="Información rápida">
+                <div class="info-item info-item-main">
+                    <span class="info-label">Guardia</span>
+                    <strong>Las 24 horas</strong>
+                    <span class="info-sub">Todos los días del año</span>
                 </div>
 
-                <div class="statistics">
-                    <div class="stat">
-                        <div class="stat-icon blue">
-                            🏥
-                        </div>
-                        <div>
-
-                            <strong>
-                                24 hs
-                            </strong>
-
-                            <span>
-                                Atención
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="stat">
-                        <div class="stat-icon green">
-                            🩺
-                        </div>
-
-                        <div>
-                            <strong>
-                                +30
-                            </strong>
-                            <span>
-                                Profesionales
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="stat">
-                        <div class="stat-icon purple">
-                            ❤️
-                        </div>
-                        <div>
-                            <strong>
-                                +10
-                            </strong>
-                            <span>
-                                Especialidades
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="stat">
-
-                        <div class="stat-icon orange">
-                            📅
-                        </div>
-
-                        <div>
-                            <strong>
-                                Turnos
-                            </strong>
-
-                            <span>
-                                Programados
-                            </span>
-                        </div>
-                    </div>
+                <div class="info-item">
+                    <span class="info-label">Consultorios externos</span>
+                    <strong>Lunes a viernes</strong>
+                    <span class="info-sub">08:00 a 20:00 hs</span>
                 </div>
-            </div>
 
+                <div class="info-item">
+                    <span class="info-label">Teléfono</span>
+                    <strong>(0351) 456-7890</strong>
+                    <span class="info-sub">Av. Principal 1234</span>
+                </div>
+            </aside>
         </section>
 
 
-
-        <!-- =================================================
-             ESPECIALIDADES
-        ================================================== -->
-
-        <section class="services"
-                 id="especialidades">
-
-
-            <div class="section-title">
-                <span>
-                    NUESTROS SERVICIOS
-                </span>
-
-                <h2>
-                    Especialidades médicas
-                </h2>
-
-                <p>
-                    Contamos con profesionales especializados
-                    para brindar atención en diferentes áreas
-                    de la salud.
-                </p>
+        <!-- ================= ESPECIALIDADES ================= -->
+        <section class="section" id="especialidades">
+            <div class="section-head">
+                <h2>Especialidades médicas</h2>
+                <p>Profesionales especializados para cuidar tu salud y la de tu familia.</p>
             </div>
 
-
-            <div class="service-grid">
-
-
-                <!-- Cardiología -->
-
-                <div class="service-card">
-                    <div class="service-icon">
-                        ❤️
-                    </div>
-
-                    <h3>
-                        Cardiología
-                    </h3>
-                    <p>
-                        Atención y seguimiento de enfermedades
-                        cardiovasculares.
-                    </p>
-                </div>
-
-
-                <div class="service-card">
-                    <div class="service-icon">
-                        🩺
-                    </div>
-                    <h3>
-                        Clínica Médica
-                    </h3>
-                    <p>
-                        Atención integral para la prevención,
-                        diagnóstico y tratamiento.
-                    </p>
-                </div>
-
-
-                <div class="service-card">
-                    <div class="service-icon">
-                        👶
-                    </div>
-
-                    <h3>
-                        Pediatría
-                    </h3>
-
-                    <p>
-                        Atención médica especializada para
-                        niños y adolescentes.
-                    </p>
-                </div>
-
-                <div class="service-card">
-
-                    <div class="service-icon">
-                        🦴
-                    </div>
-
-                    <h3>
-                        Traumatología
-                    </h3>
-
-                    <p>
-                        Diagnóstico y tratamiento de lesiones
-                        y enfermedades del sistema locomotor.
-                    </p>
-                </div>
-
-            </div>
-
+            <ul class="specialties">
+                <li>
+                    <h3>Cardiología</h3>
+                    <p>Prevención, diagnóstico y seguimiento de enfermedades del corazón.</p>
+                </li>
+                <li>
+                    <h3>Clínica médica</h3>
+                    <p>Atención integral para adultos: controles, diagnóstico y tratamiento.</p>
+                </li>
+                <li>
+                    <h3>Pediatría</h3>
+                    <p>Controles y atención de niños y adolescentes.</p>
+                </li>
+                <li>
+                    <h3>Traumatología</h3>
+                    <p>Lesiones y enfermedades de huesos, músculos y articulaciones.</p>
+                </li>
+                <!-- Agregá más <li> a medida que sumes especialidades -->
+            </ul>
         </section>
 
 
+        <!-- ================= SOBRE FAJUAR ================= -->
+        <section class="section section-tint" id="nosotros">
+            <div class="about">
+                <div class="about-text">
+                    <h2>Sobre Fajuar</h2>
 
-        <!-- =================================================
-             SOBRE EL HOSPITAL
-        ================================================== -->
+                    <!-- EDITAR: reemplazá este texto con la historia real del hospital -->
+                    <p>
+                        FAJUAR nació con una idea simple: que la atención médica de
+                        calidad esté al alcance de nuestra comunidad. Con el tiempo
+                        fuimos sumando profesionales, especialidades y equipamiento,
+                        sin perder el trato cercano que nos define.
+                    </p>
+                    <p>
+                        Hoy somos un hospital que combina guardia permanente,
+                        consultorios externos y seguimiento de cada paciente,
+                        con equipos que trabajan en conjunto para darte una
+                        respuesta clara y a tiempo.
+                    </p>
+                </div>
 
-        <section class="about"
-                 id="nosotros">
-
-
-            <div class="about-content">
-                <span class="badge">
-                    SOBRE FAJUAR
-                </span>
-
-
-                <h2>
-                    Comprometidos con la salud
-                    de nuestra comunidad
-                </h2>
-
-
-                <p>
-                    FAJUAR es una institución dedicada a brindar
-                    atención médica integral a nuestra comunidad.
-                    Nuestro equipo está formado por profesionales
-                    de distintas especialidades que trabajan
-                    diariamente para ofrecer una atención
-                    responsable, humana y de calidad.
-                </p>
-
-                <ul>
+                <ul class="values">
                     <li>
-                        ✓ Profesionales capacitados
+                        <strong>Profesionales capacitados</strong>
+                        <span>Equipos de distintas especialidades, en formación permanente.</span>
                     </li>
-
                     <li>
-                        ✓ Atención centrada en el paciente
+                        <strong>Atención centrada en el paciente</strong>
+                        <span>Te escuchamos, te explicamos y te acompañamos.</span>
                     </li>
-
                     <li>
-                        ✓ Instalaciones equipadas
-                    </li>
-
-                    <li>
-                        ✓ Atención y seguimiento personalizado
+                        <strong>Instalaciones equipadas</strong>
+                        <span>Espacios pensados para tu comodidad y seguridad.</span>
                     </li>
                 </ul>
             </div>
         </section>
 
 
-
-        <!-- =================================================
-             INFORMACIÓN PARA PACIENTES
-        ================================================== -->
-
-        <section class="patient-info">
-
-
-            <div class="patient-card">
-
-
-                <div class="patient-icon">
-                    👤
-                </div>
-
-
-                <div>
-
-                    <h2>
-                        Información para pacientes
-                    </h2>
-
-
+        <!-- ================= TURNOS ================= -->
+        <section class="section" id="turnos">
+            <div class="turnos">
+                <div class="turnos-text">
+                    <h2>Sacá tu turno</h2>
                     <p>
-
-                        Consultá información sobre turnos,
-                        especialidades, profesionales,
-                        horarios de atención y servicios
-                        disponibles en nuestro hospital.
-
+                        Reservá tu consulta en pocos pasos, sin filas ni llamadas.
                     </p>
 
-
-                    <a href="#contacto"
-                       class="btn-primary">
-
-                        Ver información
-
-                    </a>
-
+                    <!-- TODO: cambiar href="#" por la URL de turnos -->
+                    <a href="#" class="btn btn-accent btn-lg">Sacar turno</a>
                 </div>
 
-
+                <ol class="steps">
+                    <li>
+                        <strong>Elegí la especialidad</strong>
+                        <span>Seleccioná el área que necesitás.</span>
+                    </li>
+                    <li>
+                        <strong>Elegí profesional, día y horario</strong>
+                        <span>Mirá la disponibilidad y escogé lo que mejor te quede.</span>
+                    </li>
+                    <li>
+                        <strong>Confirmá tu turno</strong>
+                        <span>Completá tus datos y listo.</span>
+                    </li>
+                </ol>
             </div>
-
-
         </section>
 
 
-
-        <!-- =================================================
-             CONTACTO
-        ================================================== -->
-
-        <section class="contact"
-                 id="contacto">
-
-
-            <div class="section-title">
-                <span>
-                    CONTACTO
-                </span>
-
-                <h2>
-                    Estamos para ayudarte
-                </h2>
-
-                <p>
-                    Si necesitás información o querés
-                    realizar una consulta, podés
-                    comunicarte con nosotros.
-                </p>
+        <!-- ================= CONTACTO ================= -->
+        <section class="section section-tint" id="contacto">
+            <div class="section-head">
+                <h2>Contacto</h2>
+                <p>Si necesitás información o querés hacer una consulta, escribinos o acercate.</p>
             </div>
 
-            <div class="contact-grid">
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        📍
-                    </div>
-
-                    <h3>
-                        Dirección
-                    </h3>
-
-                    <p>
-                        Av. Principal 1234
-                    </p>
+            <dl class="contact-list">
+                <div>
+                    <dt>Dirección</dt>
+                    <dd>Av. Principal 1234</dd>
                 </div>
-
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        📞
-                    </div>
-
-                    <h3>
-                        Teléfono
-                    </h3>
-
-                    <p>
-                        (0351) 456-7890
-                    </p>
+                <div>
+                    <dt>Teléfono</dt>
+                    <dd>(0351) 456-7890</dd>
                 </div>
-
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        🕐
-                    </div>
-                    <h3>
-                        Atención
-                    </h3>
-                    <p> Lunes a viernes
-                        <br>
-                        08:00 - 20:00 hs
-                    </p>
+                <div>
+                    <dt>Horario de consultorios</dt>
+                    <dd>Lunes a viernes<br>08:00 a 20:00 hs</dd>
                 </div>
-            </div>
+                <div>
+                    <dt>Guardia</dt>
+                    <dd>24 horas, todos los días</dd>
+                </div>
+            </dl>
         </section>
 
     </main>
 
-    <footer>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="footer">
         <div class="footer-content">
-            <div>
-                <h3>
-                    ✚ FAJUAR
-                </h3>
-
-                <p>
-                    Brindando atención médica de calidad
-                    y comprometidos con la salud de nuestra
-                    comunidad.
-                </p>
+            <div class="footer-brand">
+                <a href="/" class="logo logo-light">
+                    <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+                        <rect width="32" height="32" rx="8"/>
+                        <path d="M13 7h6v6h6v6h-6v6h-6v-6H7v-6h6z"/>
+                    </svg>
+                    <span>FAJUAR</span>
+                </a>
+                <p>Atención médica de calidad, comprometidos con la salud de nuestra comunidad.</p>
             </div>
 
             <div>
-                <h4>
-                    Navegación
-                </h4>
-
-                <a href="/">
-                    Inicio
-                </a>
-
-                <a href="#especialidades">
-                    Especialidades
-                </a>
-
-                <a href="#nosotros">
-                    Nosotros
-                </a>
-
-                <a href="#contacto">
-                    Contacto
-                </a>
+                <h4>Navegación</h4>
+                <a href="/">Inicio</a>
+                <a href="#especialidades">Especialidades</a>
+                <a href="#nosotros">Sobre Fajuar</a>
+                <a href="#turnos">Turnos</a>
+                <a href="#contacto">Contacto</a>
             </div>
 
             <div>
-                <h4>
-                    Acceso
-                </h4>
-
-                <a href="/login">
-                    Iniciar sesión
-                </a>
-
-                <a href="#">
-                    Portal de empleados
-                </a>
-
+                <h4>Acceso</h4>
+                <a href="/login">Iniciar sesión (empleados)</a>
             </div>
         </div>
 
         <div class="footer-bottom">
-            © 2026 FAJUAR.
-            Todos los derechos reservados.
+            © 2026 FAJUAR. Todos los derechos reservados.
         </div>
     </footer>
+
 </body>
 
 </html>
